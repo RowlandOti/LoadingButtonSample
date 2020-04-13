@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var radioGroup: RadioGroup
     private lateinit var customButton: LoadingButton
     private var selectedItemUrl: String? = null
+    private var selectedItemName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +46,16 @@ class MainActivity : AppCompatActivity() {
             when (checkedId) {
                 R.id.glid_repo -> {
                     selectedItemUrl = "https://github.com/bumptech/glide/archive/master.zip"
+                    selectedItemName = "GlideRepo.zip"
                 }
                 R.id.udacity_repo -> {
                     selectedItemUrl =
                             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
+                    selectedItemName = "UdacityRepo.zip"
                 }
                 R.id.retrofit_repo -> {
                     selectedItemUrl = "https://github.com/square/retrofit/archive/master.zip"
+                    selectedItemName = "RetrofitRepo.zip"
                 }
             }
         }
@@ -64,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     // will emit 1 Permission object
                     if (permission.granted) {
                         // All permissions are granted !
-                        download(selectedItemUrl!!)
+                        download(selectedItemUrl!!, selectedItemName!!)
                     } else if (permission.shouldShowRequestPermissionRationale) {
                         // At least one denied permission without ask never again
                         Toast.makeText(
@@ -77,10 +82,9 @@ class MainActivity : AppCompatActivity() {
                         // At least one denied permission with ask never again Need to go to the settings
                         Toast.makeText(
                                 this,
-                                "Please grant us storage permissions",
+                                "Go to settings to manually grant us denied permissions",
                                 Toast.LENGTH_SHORT
-                        )
-                                .show()
+                        ).show()
                     }
                 }
 
@@ -99,11 +103,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun download(url: String) {
+    private fun download(url: String, selectedItemName: String) {
         val request =
                 DownloadManager.Request(Uri.parse(url))
                         .setTitle(getString(R.string.app_name))
                         .setDescription(getString(R.string.app_description))
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, selectedItemName)
                         .setRequiresCharging(false)
                         .setAllowedOverMetered(true)
                         .setAllowedOverRoaming(true)
