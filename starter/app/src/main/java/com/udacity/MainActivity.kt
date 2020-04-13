@@ -2,8 +2,6 @@ package com.udacity
 
 import android.Manifest
 import android.app.DownloadManager
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,13 +22,20 @@ class MainActivity : AppCompatActivity() {
     val rxPermissions = RxPermissions(this);
     private var downloadID: Long = 0
 
-    private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
     private lateinit var radioGroup: RadioGroup
     private lateinit var customButton: LoadingButton
     private var selectedItemUrl: String? = null
     private var selectedItemName: String? = null
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            NotificationUtils.createNotification(this@MainActivity,  selectedItemName!!, downloadId!!)
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,10 +102,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
     private fun download(url: String, selectedItemName: String) {
@@ -108,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 DownloadManager.Request(Uri.parse(url))
                         .setTitle(getString(R.string.app_name))
                         .setDescription(getString(R.string.app_description))
-                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        //.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, selectedItemName)
                         .setRequiresCharging(false)
                         .setAllowedOverMetered(true)
@@ -118,9 +122,4 @@ class MainActivity : AppCompatActivity() {
         downloadID =
                 downloadManager.enqueue(request)// enqueue puts the download request in the queue.
     }
-
-    companion object {
-        private const val CHANNEL_ID = "channelId"
-    }
-
 }

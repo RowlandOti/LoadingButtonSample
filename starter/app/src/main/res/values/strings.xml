@@ -16,4 +16,6 @@
   <string name="udacity_repo">LoadApp - Current Repository by Udacity</string>
   <string name="download_msg">Download</string>
   <string name="downloading_msg">We are loading</string>
+  <string name="title_activity_details">DetailsActivity</string>
+  <string name="show_download_details">Download Details</string>
 </resources>
