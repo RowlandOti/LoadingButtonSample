@@ -18,4 +18,7 @@
   <string name="downloading_msg">We are loading</string>
   <string name="title_activity_details">DetailsActivity</string>
   <string name="show_download_details">Download Details</string>
+  <string name="downloaded_bytes">Downloaded Bytes: %s</string>
+  <string name="total_bytes">Total Bytes: %s</string>
+  <string name="download_status">Download Status: %s</string>
 </resources>

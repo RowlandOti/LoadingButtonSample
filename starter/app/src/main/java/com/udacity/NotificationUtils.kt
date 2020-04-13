@@ -32,40 +32,7 @@ object NotificationUtils {
                 )
         )
 
-        val resultIntent = Intent(ctx, DetailActivity::class.java)
-        val pendingIntent: PendingIntent? = TaskStackBuilder.create(ctx).run {
-            // Add the intent, which inflates the back stack
-            addNextIntentWithParentStack(resultIntent)
-            // Get the PendingIntent containing the entire back stack
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
 
-        val action = NotificationCompat.Action.Builder(
-                R.drawable.ic_assistant_black_24dp,
-                ctx.getString(R.string.show_download_details),
-                pendingIntent
-        ).build()
-
-        builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(fileName)
-                .setContentText("Download completed")
-                .setStyle(
-                        NotificationCompat.BigTextStyle()
-                                .bigText("File Available")
-                                .setBigContentTitle(fileName)
-                )
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .addAction(action)
-
-        val notificationManager =
-                ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        notificationManager.notify(NOTIF_ID, builder.build())
-    }
-
-
-    private fun setDownloadedDetails(ctx: Context, downloadId: Long): Intent {
         val downloadManager =
                 ctx.getSystemService(AppCompatActivity.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -84,10 +51,44 @@ object NotificationUtils {
                 cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))
         cursor.close()
 
-        val i = Intent()
+        val resultIntent = Intent(ctx, DetailActivity::class.java)
 
-        return i
+        resultIntent.putExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, downloadedBytes)
+        resultIntent.putExtra(DownloadManager.COLUMN_TOTAL_SIZE_BYTES, totalBytes)
+        resultIntent.putExtra(DownloadManager.COLUMN_STATUS, downloadStatus)
+        resultIntent.putExtra(DownloadManager.COLUMN_LOCAL_FILENAME, downloadFileName)
+
+        val pendingIntent: PendingIntent? = TaskStackBuilder.create(ctx).run {
+            // Add the intent, which inflates the back stack
+            addNextIntentWithParentStack(resultIntent)
+            // Get the PendingIntent containing the entire back stack
+            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        val action = NotificationCompat.Action.Builder(
+                R.drawable.ic_assistant_black_24dp,
+                ctx.getString(R.string.show_download_details),
+                pendingIntent
+        ).build()
+
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(fileName)
+                .setContentText("Download completed")
+                .setStyle(
+                        NotificationCompat.BigTextStyle()
+                                .bigText("Status : $downloadStatus")
+                                .setBigContentTitle(fileName)
+                )
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .addAction(action)
+
+        val notificationManager =
+                ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.notify(NOTIF_ID, builder.build())
     }
+
 
     private fun createNotificationChannel(
             channelName: String,
