@@ -18,7 +18,8 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_chainStyle="spread_inside" />
+    app:layout_constraintVertical_chainStyle="spread_inside"
+    app:layout_constraintBottom_toTopOf="@id/txt_total_bytes"/>
 
   <TextView
     android:textSize="16sp"
@@ -26,15 +27,16 @@
     android:id="@+id/txt_total_bytes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="@id/txt_download_status"
+    app:layout_constraintBottom_toTopOf="@id/txt_download_status"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/txt_downloaded_bytes"
     app:layout_constraintVertical_chainStyle="spread_inside" />
 
   <TextView
+    app:layout_constraintTop_toBottomOf="@id/txt_total_bytes"
     android:textSize="16sp"
-    tools:text="Download Status: Completed"
+    tools:text="Download Status: 238987"
     android:id="@+id/txt_download_status"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

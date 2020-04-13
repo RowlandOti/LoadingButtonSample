@@ -23,12 +23,12 @@ class DetailActivity : AppCompatActivity() {
 
 
          intent?.extras?.let {
-             val downloadedBytes = it.getString(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
-             val totalBytes = it.getString(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+             val downloadedBytes = it.getInt(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+             val totalBytes = it.getInt(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
              val downloadStatus = it.getString(DownloadManager.COLUMN_STATUS)
 
              downloadedBytesTxt.text = getString(R.string.downloaded_bytes, downloadedBytes)
-             downloadStatusTxt.text = getString(R.string.total_bytes, totalBytes)
+             totalBytesTxt.text = getString(R.string.total_bytes, totalBytes)
              downloadStatusTxt.text = getString(R.string.download_status, downloadStatus)
          }
 

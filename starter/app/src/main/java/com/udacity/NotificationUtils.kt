@@ -47,16 +47,19 @@ object NotificationUtils {
         val totalBytes: Int =
                 cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
         val downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-        val downloadFileName =
-                cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME))
+
+        var status = "Failed"
+        if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL){
+            status = "Success"
+        }
+
         cursor.close()
 
         val resultIntent = Intent(ctx, DetailActivity::class.java)
 
         resultIntent.putExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, downloadedBytes)
         resultIntent.putExtra(DownloadManager.COLUMN_TOTAL_SIZE_BYTES, totalBytes)
-        resultIntent.putExtra(DownloadManager.COLUMN_STATUS, downloadStatus)
-        resultIntent.putExtra(DownloadManager.COLUMN_LOCAL_FILENAME, downloadFileName)
+        resultIntent.putExtra(DownloadManager.COLUMN_STATUS, status)
 
         val pendingIntent: PendingIntent? = TaskStackBuilder.create(ctx).run {
             // Add the intent, which inflates the back stack
