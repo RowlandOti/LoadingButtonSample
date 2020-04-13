@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="LoadingButton">
-<!--   TODO: create custom attributes for the view-->
-    </declare-styleable>
+  <declare-styleable name="LoadingButton">
+    <attr name="cb_is_animate_layout" format="boolean" />
+    <attr name="cb_tv_background_drawable" format="reference" />
+    <attr name="cb_tv_background_color" format="color" />
+    <attr name="cb_tv_text_color" format="color" />
+    <attr name="cb_layout_animation" format="reference" />
+  </declare-styleable>
 </resources>

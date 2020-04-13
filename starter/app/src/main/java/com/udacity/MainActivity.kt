@@ -1,5 +1,6 @@
 package com.udacity
 
+import android.Manifest
 import android.app.DownloadManager
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,11 +14,13 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    val rxPermissions = RxPermissions(this);
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
@@ -54,7 +57,33 @@ class MainActivity : AppCompatActivity() {
 
         customButton.setOnClickListener {
             if (!selectedItemUrl.isNullOrEmpty()) {
-                download(selectedItemUrl!!)
+                this.rxPermissions.requestEachCombined(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                ).subscribe { permission ->
+                    // will emit 1 Permission object
+                    if (permission.granted) {
+                        // All permissions are granted !
+                        download(selectedItemUrl!!)
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // At least one denied permission without ask never again
+                        Toast.makeText(
+                                this,
+                                "Please grant us storage permissions",
+                                Toast.LENGTH_SHORT
+                        )
+                                .show()
+                    } else {
+                        // At least one denied permission with ask never again Need to go to the settings
+                        Toast.makeText(
+                                this,
+                                "Please grant us storage permissions",
+                                Toast.LENGTH_SHORT
+                        )
+                                .show()
+                    }
+                }
+
             } else {
                 Toast.makeText(this, "Please first select an item to download", Toast.LENGTH_SHORT)
                         .show()
