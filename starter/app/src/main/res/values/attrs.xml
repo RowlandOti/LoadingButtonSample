@@ -2,9 +2,12 @@
 <resources>
   <declare-styleable name="LoadingButton">
     <attr name="cb_is_animate_layout" format="boolean" />
-    <attr name="cb_tv_background_drawable" format="reference" />
-    <attr name="cb_tv_background_color" format="color" />
+    <attr name="cb_btn_loading_bg_color" format="color" />
+    <attr name="cb_btn_normal_bg_color" format="color" />
     <attr name="cb_tv_text_color" format="color" />
-    <attr name="cb_layout_animation" format="reference" />
+    <attr name="cb_loading_circle_color" format="color" />
+    <attr name="cb_loading_circle_stroke_width" format="dimension" />
+    <attr name="cb_loading_circle_initial_angle" format="dimension" />
+    <attr name="cb_loading_circle_radius" format="dimension" />
   </declare-styleable>
 </resources>

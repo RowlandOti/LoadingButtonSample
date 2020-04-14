@@ -71,7 +71,12 @@
       android:layout_margin="20dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent" />
+      app:layout_constraintStart_toStartOf="parent"
+      app:cb_is_animate_layout="true"
+      app:cb_btn_loading_bg_color="@color/colorPrimaryDark"
+      app:cb_btn_normal_bg_color="@color/colorPrimary"
+      app:cb_loading_circle_color="@color/colorAccent"
+      app:cb_loading_circle_stroke_width="5dp"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

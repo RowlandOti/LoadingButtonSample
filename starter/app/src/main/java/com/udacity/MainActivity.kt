@@ -12,17 +12,15 @@ import android.os.Environment
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    val rxPermissions = RxPermissions(this);
+    private val rxPermissions = RxPermissions(this);
     private var downloadID: Long = 0
 
-    private lateinit var action: NotificationCompat.Action
     private lateinit var radioGroup: RadioGroup
     private lateinit var customButton: LoadingButton
     private var selectedItemUrl: String? = null
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
             NotificationUtils.createNotification(this@MainActivity,  selectedItemName!!, downloadId!!)
-
+            customButton.setState(ButtonState.Completed)
         }
     }
 
@@ -112,14 +110,13 @@ class MainActivity : AppCompatActivity() {
                 DownloadManager.Request(Uri.parse(url))
                         .setTitle(getString(R.string.app_name))
                         .setDescription(getString(R.string.app_description))
-                        //.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, selectedItemName)
                         .setRequiresCharging(false)
                         .setAllowedOverMetered(true)
                         .setAllowedOverRoaming(true)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        downloadID = downloadManager.enqueue(request)
+        customButton.setState(ButtonState.Loading)
     }
 }

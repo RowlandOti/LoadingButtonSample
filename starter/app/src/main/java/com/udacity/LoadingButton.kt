@@ -5,21 +5,25 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
-import kotlin.properties.Delegates
 
+
+private const val DEFAULT_STROKE_WIDTH = 5f
+private const val DEFAULT_CIRCLE_RADIUS = 16f
+private const val DEFAULT_START_ANGLE = 90f
+private const val DEFAULT_INITIAL_ANGLE = 0f
 
 class LoadingButton @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private var loadingCircleInitialAngle: Float
+    private var loadingCircleStrokeWidth: Float
+    private var loadingCircleRadius: Float
     private var widthSize = 0
     private var heightSize = 0
 
@@ -29,13 +33,15 @@ class LoadingButton @JvmOverloads constructor(
     private var buttonDownloadColor = 0
     private var buttonDownloadingColor = 0
 
-    private lateinit var textPaint: Paint
+    private var loadingCircleColor = 0
+
+    private var textPaint: Paint
+    private var circlePaint: Paint
 
     private var valueAnimator: ValueAnimator? = null
-
-    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
-
-    }
+    private var circularAnimator: ValueAnimator? = null
+    private var loadingCircleAnimatedInitialAngle: Float
+    private var buttonDownloadingAnimatedColor: Int
 
 
     init {
@@ -46,18 +52,35 @@ class LoadingButton @JvmOverloads constructor(
                 R.style.AppTheme
         )
         try {
+            loadingCircleInitialAngle = a.getDimension(
+                    R.styleable.LoadingButton_cb_loading_circle_initial_angle,
+                    DEFAULT_INITIAL_ANGLE
+            )
+            loadingCircleStrokeWidth = a.getDimension(
+                    R.styleable.LoadingButton_cb_loading_circle_stroke_width,
+                    DEFAULT_STROKE_WIDTH
+            )
+            loadingCircleRadius = a.getDimension(
+                    R.styleable.LoadingButton_cb_loading_circle_radius,
+                    DEFAULT_CIRCLE_RADIUS
+            )
             isAnimateLayout = a.getBoolean(R.styleable.LoadingButton_cb_is_animate_layout, true)
             buttonDownloadColor = a.getColor(
-                    R.styleable.LoadingButton_cb_tv_background_color,
-                    ContextCompat.getColor(context,R.color.colorPrimary)
+                    R.styleable.LoadingButton_cb_btn_normal_bg_color,
+                    ContextCompat.getColor(context, R.color.colorPrimary)
             )
             buttonDownloadingColor = a.getColor(
-                    R.styleable.LoadingButton_cb_tv_background_color,
-                    ContextCompat.getColor(context,R.color.colorPrimaryDark)
+                    R.styleable.LoadingButton_cb_btn_loading_bg_color,
+                    ContextCompat.getColor(context, R.color.colorPrimaryDark)
             )
             buttonTextColor = a.getColor(
                     R.styleable.LoadingButton_cb_tv_text_color,
                     ContextCompat.getColor(context, android.R.color.black)
+            )
+
+            loadingCircleColor = a.getColor(
+                    R.styleable.LoadingButton_cb_loading_circle_color,
+                    ContextCompat.getColor(context, R.color.colorAccent)
             )
         } finally {
             a.recycle()
@@ -71,6 +94,15 @@ class LoadingButton @JvmOverloads constructor(
             typeface = Typeface.create("", Typeface.BOLD)
         }
 
+        circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            color = loadingCircleColor
+            strokeWidth = loadingCircleStrokeWidth
+        }
+
+        loadingCircleAnimatedInitialAngle = loadingCircleInitialAngle
+        buttonDownloadingAnimatedColor = buttonDownloadColor
+
         valueAnimator = ObjectAnimator.ofArgb(
                 this,
                 "backgroundColor", buttonDownloadColor, buttonDownloadingColor
@@ -80,13 +112,27 @@ class LoadingButton @JvmOverloads constructor(
         valueAnimator?.repeatMode = ObjectAnimator.REVERSE
         valueAnimator?.interpolator = DecelerateInterpolator()
         valueAnimator?.disableViewDuringAnimation(this)
+
+        circularAnimator = ValueAnimator.ofInt(1, 360)
+        circularAnimator?.interpolator = DecelerateInterpolator()
+        circularAnimator?.duration = 500
+        circularAnimator?.repeatCount = ValueAnimator.INFINITE
+        circularAnimator?.addUpdateListener {
+            loadingCircleAnimatedInitialAngle = (circularAnimator?.animatedValue as Int).toFloat()
+            invalidate()
+        }
     }
 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawColor(buttonDownloadColor)
+        drawBackgroundColor(canvas)
         drawText(canvas)
+        drawCircle(canvas)
+    }
+
+    private fun drawBackgroundColor(canvas: Canvas) {
+        canvas.drawColor(buttonDownloadingAnimatedColor)
     }
 
     private fun drawText(canvas: Canvas) {
@@ -99,13 +145,23 @@ class LoadingButton @JvmOverloads constructor(
         val x: Float = cWidth / 2f - r.width() / 2f - r.left
         val y: Float = cHeight / 2f + r.height() / 2f - r.bottom
         canvas.drawText(text, x, y, textPaint)
+    }
 
-       /* canvas.drawText(
-                context.getString(R.string.download_msg),
-                widthSize  / 2f,
-                heightSize  / 2f,
-                textPaint
-        )*/
+    private fun drawCircle(canvas: Canvas) {
+        val text = context.getString(R.string.download_msg)
+
+        val centerX = measuredWidth / 2f + textPaint.measureText(text)
+        val centerY = measuredHeight / 2f
+
+        //canvas.drawCircle(centerX, centerY, loadingCircleRadius, circlePaint)
+
+        val r = RectF()
+        r.left = centerX - loadingCircleStrokeWidth -  loadingCircleRadius
+        r.top = centerY - loadingCircleStrokeWidth -  loadingCircleRadius
+        r.right = centerX - loadingCircleStrokeWidth -  loadingCircleRadius + loadingCircleRadius * 2
+        r.bottom = centerY - loadingCircleStrokeWidth -  loadingCircleRadius + loadingCircleRadius * 2
+
+        canvas.drawArc(r, DEFAULT_START_ANGLE, loadingCircleAnimatedInitialAngle, false, circlePaint);
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -121,44 +177,38 @@ class LoadingButton @JvmOverloads constructor(
         setMeasuredDimension(w, h)
     }
 
-    override fun performClick(): Boolean {
-        setState(ButtonState.Loading)
-        return super.performClick()
-    }
-
-    private fun setState(state: ButtonState) {
+    fun setState(state: ButtonState) {
         when (state) {
             ButtonState.Clicked -> {
 
             }
             ButtonState.Loading -> {
-                valueAnimator?.start()
+                if (isAnimateLayout) {
+                    valueAnimator?.start()
+                    circularAnimator?.start()
+                }
             }
             ButtonState.Completed -> {
                 valueAnimator?.end()
+                circularAnimator?.end()
+
+                buttonDownloadingAnimatedColor = buttonDownloadColor
+                loadingCircleAnimatedInitialAngle = loadingCircleInitialAngle
             }
         }
-
-        invalidate()
     }
 
     private fun ValueAnimator.disableViewDuringAnimation(view: View) {
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
-                //view.isEnabled = false
+                view.isEnabled = false
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                //view.isEnabled = true
+                view.isEnabled = true
             }
         })
 
-        addUpdateListener(object: ValueAnimator.AnimatorUpdateListener {
-            override fun onAnimationUpdate(animation: ValueAnimator?) {
-                setBackgroundColor(valueAnimator?.animatedValue as Int)
-            }
-
-        })
+        addUpdateListener { buttonDownloadingAnimatedColor = valueAnimator?.animatedValue as Int }
     }
-
 }

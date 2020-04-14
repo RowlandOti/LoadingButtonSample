@@ -35,8 +35,6 @@ class DetailActivity : AppCompatActivity() {
              downloadStatusTxt.text = getString(R.string.download_status, downloadStatus)
          }
 
-        motionLayout.rebuildScene()
-
     }
 
 }
