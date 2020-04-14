@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
-
+private const val KEY_BUTTON_STATE = ".button_state"
 class MainActivity : AppCompatActivity() {
 
     private val rxPermissions = RxPermissions(this);
@@ -26,12 +26,15 @@ class MainActivity : AppCompatActivity() {
     private var selectedItemUrl: String? = null
     private var selectedItemName: String? = null
 
+    private var isLoading = false
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
             NotificationUtils.createNotification(this@MainActivity,  selectedItemName!!, downloadId!!)
             customButton.setState(ButtonState.Completed)
+            isLoading = false
         }
     }
 
@@ -42,6 +45,15 @@ class MainActivity : AppCompatActivity() {
 
         radioGroup = findViewById(R.id.radio_group)
         customButton = findViewById(R.id.custom_button)
+
+        if (savedInstanceState != null) {
+            isLoading = savedInstanceState.getBoolean(KEY_BUTTON_STATE)
+            if(isLoading) {
+                customButton.setState(ButtonState.Loading)
+            } else {
+                customButton.setState(ButtonState.Completed)
+            }
+        }
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
@@ -105,6 +117,11 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(receiver)
     }
 
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putBoolean(KEY_BUTTON_STATE, isLoading)
+    }
+
     private fun download(url: String, selectedItemName: String) {
         val request =
                 DownloadManager.Request(Uri.parse(url))
@@ -118,5 +135,6 @@ class MainActivity : AppCompatActivity() {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         downloadID = downloadManager.enqueue(request)
         customButton.setState(ButtonState.Loading)
+        isLoading = true
     }
 }
