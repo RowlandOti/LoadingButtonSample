@@ -42,6 +42,7 @@ class LoadingButton @JvmOverloads constructor(
     private var circularAnimator: ValueAnimator? = null
     private var loadingCircleAnimatedInitialAngle: Float
     private var buttonDownloadingAnimatedColor: Int
+    private var buttonStringResId: Int
 
 
     init {
@@ -85,6 +86,8 @@ class LoadingButton @JvmOverloads constructor(
         } finally {
             a.recycle()
         }
+
+        buttonStringResId = R.string.download_msg
 
         textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
@@ -136,7 +139,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private fun drawText(canvas: Canvas) {
-        val text = context.getString(R.string.download_msg)
+        val text = context.getString(buttonStringResId)
         val r = Rect()
         canvas.getClipBounds(r)
         val cHeight: Int = r.height()
@@ -148,7 +151,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private fun drawCircle(canvas: Canvas) {
-        val text = context.getString(R.string.download_msg)
+        val text = context.getString(buttonStringResId)
 
         val centerX = measuredWidth / 2f + textPaint.measureText(text)
         val centerY = measuredHeight / 2f
@@ -187,11 +190,13 @@ class LoadingButton @JvmOverloads constructor(
                     valueAnimator?.start()
                     circularAnimator?.start()
                 }
+                buttonStringResId = R.string.downloading_msg
             }
             ButtonState.Completed -> {
                 valueAnimator?.end()
                 circularAnimator?.end()
 
+                buttonStringResId = R.string.download_msg
                 buttonDownloadingAnimatedColor = buttonDownloadColor
                 loadingCircleAnimatedInitialAngle = loadingCircleInitialAngle
             }
