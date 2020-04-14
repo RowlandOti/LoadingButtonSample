@@ -79,7 +79,7 @@ object NotificationUtils {
                 .setContentText("Download completed")
                 .setStyle(
                         NotificationCompat.BigTextStyle()
-                                .bigText("Status : $downloadStatus")
+                                .bigText("Status : $status")
                                 .setBigContentTitle(fileName)
                 )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
