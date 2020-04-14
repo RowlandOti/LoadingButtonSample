@@ -2,50 +2,61 @@
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/mnt_detail"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:layout_margin="20dp"
+  app:layoutDescription="@xml/detail_scene_01"
   app:layout_behavior="@string/appbar_scrolling_view_behavior"
   tools:context=".DetailActivity"
-  tools:showPaths="true"
-  app:layoutDescription="@xml/detail_scene_01"
   tools:showIn="@layout/activity_detail"
-  android:id="@+id/mnt_detail">
+  tools:showPaths="true">
 
   <TextView
-    android:textSize="16sp"
-    tools:text="Downloaded Bytes: 238987"
-    android:id="@+id/txt_downloaded_bytes"
+    android:id="@+id/txt_file_name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toTopOf="@id/txt_total_bytes"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_chainStyle="spread_inside"
-    app:layout_constraintBottom_toTopOf="@id/txt_total_bytes"/>
+    tools:text="File Name: RetrofitRepo.zip" />
 
   <TextView
-    android:textSize="16sp"
-    tools:text="Total Bytes: 238987"
     android:id="@+id/txt_total_bytes"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textSize="16sp"
     app:layout_constraintBottom_toTopOf="@id/txt_download_status"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/txt_downloaded_bytes"
-    app:layout_constraintVertical_chainStyle="spread_inside" />
+    app:layout_constraintTop_toBottomOf="@+id/txt_file_name"
+    app:layout_constraintVertical_chainStyle="spread_inside"
+    tools:text="Total Bytes: 238987 / Downloaded Bytes: 238987" />
 
   <TextView
-    app:layout_constraintTop_toBottomOf="@id/txt_total_bytes"
-    android:textSize="16sp"
-    tools:text="Download Status: 238987"
     android:id="@+id/txt_download_status"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toTopOf="@+id/btn_nav_main"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/txt_total_bytes"
+    app:layout_constraintVertical_chainStyle="spread_inside"
+    tools:text="Download Status: 238987" />
+
+  <Button
+    android:background="@color/colorPrimary"
+    android:id="@+id/btn_nav_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintVertical_chainStyle="spread_inside" />
+    android:text="@string/go_to_main_screen" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

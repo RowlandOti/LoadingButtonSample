@@ -8,13 +8,13 @@
     motion:duration="1000">
     <OnSwipe
       motion:dragDirection="dragDown"
-      motion:touchAnchorId="@+id/txt_downloaded_bytes"
+      motion:touchAnchorId="@+id/txt_file_name"
       motion:touchAnchorSide="bottom" />
   </Transition>
 
   <ConstraintSet android:id="@+id/start">
     <Constraint
-      android:id="@+id/txt_downloaded_bytes"
+      android:id="@+id/txt_file_name"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
 
@@ -27,7 +27,7 @@
 
   <ConstraintSet android:id="@+id/end">
     <Constraint
-      android:id="@+id/txt_downloaded_bytes"
+      android:id="@+id/txt_file_name"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
 

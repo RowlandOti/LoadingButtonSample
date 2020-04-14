@@ -42,9 +42,12 @@ object NotificationUtils {
         val cursor: Cursor = downloadManager.query(q)
         cursor.moveToFirst()
 
-        val downloadedBytes: Int =
+        val downloadedFileName =
+                cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE))
+
+        val downloadedBytes =
                 cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-        val totalBytes: Int =
+        val totalBytes =
                 cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
         val downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
 
@@ -57,6 +60,7 @@ object NotificationUtils {
 
         val resultIntent = Intent(ctx, DetailActivity::class.java)
 
+        resultIntent.putExtra(DownloadManager.COLUMN_TITLE, downloadedFileName)
         resultIntent.putExtra(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR, downloadedBytes)
         resultIntent.putExtra(DownloadManager.COLUMN_TOTAL_SIZE_BYTES, totalBytes)
         resultIntent.putExtra(DownloadManager.COLUMN_STATUS, status)

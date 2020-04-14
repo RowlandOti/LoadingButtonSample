@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
     private fun download(url: String, selectedItemName: String) {
         val request =
                 DownloadManager.Request(Uri.parse(url))
-                        .setTitle(getString(R.string.app_name))
+                        .setTitle(selectedItemName)
                         .setDescription(getString(R.string.app_description))
                         .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, selectedItemName)
                         .setRequiresCharging(false)

@@ -156,8 +156,6 @@ class LoadingButton @JvmOverloads constructor(
         val centerX = measuredWidth / 2f + textPaint.measureText(text)
         val centerY = measuredHeight / 2f
 
-        //canvas.drawCircle(centerX, centerY, loadingCircleRadius, circlePaint)
-
         val r = RectF()
         r.left = centerX - loadingCircleStrokeWidth -  loadingCircleRadius
         r.top = centerY - loadingCircleStrokeWidth -  loadingCircleRadius
